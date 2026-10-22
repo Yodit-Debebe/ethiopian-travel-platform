@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travllo - Popular Destination</title>
+  <link rel="stylesheet" href="{% static 'assets/styles.css' %}" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">EthioTrav</div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="">Home</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="{% url 'register' %}">register</a></li>
+
+      </ul>
+    </nav>
+    <div class="call-info">call us: +251 912 345 678</div>
+  </header>
+
+<main class="container">
+  <h1 class="page-title">Popular Destination in Ethiopia</h1>
+  <div class="destination-grid">
+    {% csrf_token %}
+    {% for d in destinations %}
+    <div class="card">
+      <img src="{{ d.img.url }}" alt="{{ d.name }}">
+      <h2>{{ d.name }}</h2>
+      <p>{{ d.desc }}</p>
+      <span class="price">Price: ${{ d.price }}</span>
+      <<a href="{% url 'payment' d.id %}">
+        <button style="margin-top:10px; padding:8px 18px; background:#555; color:white; border:none; border-radius:6px;">Pay Now</button>
+      </a>
+    </div>
+      {% endfor %} 
+  </div> 
+</main>
+<script src="{% static 'assets/main.js' %}"></script>
+</body>
+</html>

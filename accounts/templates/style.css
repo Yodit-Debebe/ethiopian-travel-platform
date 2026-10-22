@@ -1,0 +1,95 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #b4b1fb, #48c6ef);
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+form {
+  background: #efeeee;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+label {
+  display: block;
+  text-align: left;
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  transition: border 0.3s ease;
+}
+
+input:focus {
+  border-color: #6c63ff;
+  outline: none;
+}
+
+button {
+  width: 100%;
+  background: #5348ed;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #5a54e8;
+}
+
+p[style*="color:red;"] {
+  color: #e74c3c !important;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+a {
+  color: #6c63ff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+p {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #333;
+}
+
+@media (max-width: 400px) {
+  form {
+    width: 90%;
+    padding: 25px;
+  }
+} 
+
+ 

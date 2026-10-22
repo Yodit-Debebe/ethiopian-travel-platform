@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to Travllo</title>
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #0077b6, #00b4d8);
+      color: white;
+      text-align: center;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+    h1 { font-size: 3rem; margin-bottom: 1rem; }
+    p { font-size: 1.2rem; margin-bottom: 2rem; }
+    a {
+      background: white;
+      color: #0077b6;
+      text-decoration: none;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    a:hover {
+      background: #023e8a;
+      color: white;
+    }
+  </style>
+  
+</head>
+<body>
+  <h1>Welcome to EthioTrav 🌍</h1>
+  <p>Discover amazing destinations around Ethiopia!</p>
+  <a href="{% url 'home' %}">Enter Site</a>
+</body>
+</html>

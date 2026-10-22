@@ -1,0 +1,108 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: #fff;
+  color: #222;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #555;
+  color: white;
+  padding: 12px 60px;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 50px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.call-info {
+  font-size: 14px;
+}
+
+/* Main container */
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 40px;
+}
+
+/* Grid layout */
+.destination-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+/* Card styles */
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 15px;
+  text-align: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+}
+
+.card img {
+  width: 100%;
+  border-radius: 8px;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card h2 {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.card p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.price {
+  font-weight: bold;
+  color: #000;
+  font-size: 15px;
+}

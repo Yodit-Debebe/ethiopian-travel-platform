@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Success</title>
+    <link rel="stylesheet" href="{% static 'assets/styles.css' %}">
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="logo">EthioTrav</div>
+    <nav>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <h1 class="page-title">Payment Completed</h1>
+
+    <div class="card">
+        <h2>Thank you, {{ name }}!</h2>
+        <p>Your payment for <strong>{{ destination.name }}</strong> is successful.</p>
+        <p>Phone: <strong>{{ phone }}</strong></p>
+
+        <br>
+
+        <a href="{% url 'home' %}" style="
+            display:inline-block;
+            background:#555;
+            color:white;
+            padding:10px 20px;
+            border-radius:6px;
+            text-decoration:none;
+        ">Return Home</a>
+    </div>
+</main>
+
+</body>
+</html>
