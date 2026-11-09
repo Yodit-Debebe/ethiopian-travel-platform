@@ -4,6 +4,21 @@ from django.contrib import messages, auth
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+
+from .serializers import LoginSerializer
+
+from .serializers import RegisterSerializer
+
 
 def register(request):
     if request.method == 'POST':
@@ -43,4 +58,68 @@ def login(request):
         messages.warning(request, "Please log in to continue your payment.")
 
     return render(request, 'login.html')
+
+class RegisterAPIView(generics.CreateAPIView):
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.save()
+
+        return Response(
+            {
+                "message": "Registration successful.",
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                },
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+class LoginAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = LoginSerializer(
+            data=request.data,
+            context={"request": request}
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.validated_data["user"]
+
+        token, created = Token.objects.get_or_create(
+            user=user
+        )
+
+        return Response(
+            {
+                "message": "Login successful.",
+                "token": token.key,
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        request.user.auth_token.delete()
+
+        return Response(
+            {"message": "Logout successful."},
+            status=status.HTTP_200_OK
+        )
 
