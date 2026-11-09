@@ -122,3 +122,9 @@ class DestinationCreateAPIView(generics.CreateAPIView):
     queryset = Destination.objects.all()
     serializer_class = DestinationSerializer
     permission_classes = [IsAdminUser]
+
+
+class DestinationUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Destination.objects.all()
+    serializer_class = DestinationSerializer
+    permission_classes = [IsAdminUser]

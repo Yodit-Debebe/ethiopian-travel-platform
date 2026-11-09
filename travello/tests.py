@@ -113,6 +113,19 @@ class DestinationCreationAPITests(APITestCase):
 
         self.url = reverse("destination-create-api")
 
+        # Temporary destination for update and delete tests
+        self.destination = Destination.objects.create(
+            name="Test Destination",
+            desc="Original description",
+            price=500,
+            img="pics/test.jpg"
+        )
+
+        self.manage_url = reverse(
+            "destination-manage-api",
+            kwargs={"pk": self.destination.id}
+        )
+
     def get_test_image(self):
         image_buffer = BytesIO()
 
@@ -131,13 +144,15 @@ class DestinationCreationAPITests(APITestCase):
             content_type="image/jpeg"
         )
 
+    # CREATE TESTS
+
     def test_authenticated_user_can_create_destination(self):
         self.client.credentials(
             HTTP_AUTHORIZATION=f"Token {self.token.key}"
         )
 
         data = {
-            "name": "Test Destination",
+            "name": "New Destination",
             "desc": "A destination created through automated testing",
             "price": 500,
             "img": self.get_test_image()
@@ -156,7 +171,7 @@ class DestinationCreationAPITests(APITestCase):
 
         self.assertTrue(
             Destination.objects.filter(
-                name="Test Destination"
+                name="New Destination"
             ).exists()
         )
 
@@ -217,6 +232,7 @@ class DestinationCreationAPITests(APITestCase):
             destination.desc,
             "Historic rock-hewn churches"
         )
+
     def test_regular_user_cannot_create_destination(self):
         self.client.credentials(
             HTTP_AUTHORIZATION=f"Token {self.regular_token.key}"
@@ -243,5 +259,95 @@ class DestinationCreationAPITests(APITestCase):
         self.assertFalse(
             Destination.objects.filter(
                 name="Unauthorized Destination"
+            ).exists()
+        )
+
+    # UPDATE TESTS
+
+    def test_admin_can_update_destination(self):
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Token {self.token.key}"
+        )
+
+        data = {
+            "name": "Updated Destination",
+            "desc": "Updated description",
+            "price": 900,
+        }
+
+        response = self.client.patch(
+            self.manage_url,
+            data,
+            format="json"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
+        )
+
+        self.destination.refresh_from_db()
+
+        self.assertEqual(
+            self.destination.name,
+            "Updated Destination"
+        )
+
+        self.assertEqual(self.destination.price, 900)
+
+    def test_regular_user_cannot_update_destination(self):
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Token {self.regular_token.key}"
+        )
+
+        response = self.client.patch(
+            self.manage_url,
+            {"name": "Unauthorized Update"},
+            format="json"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_403_FORBIDDEN
+        )
+
+        self.destination.refresh_from_db()
+
+        self.assertEqual(
+            self.destination.name,
+            "Test Destination"
+        )
+
+    # DELETE TESTS
+
+    def test_admin_can_delete_destination(self):
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Token {self.token.key}"
+        )
+
+        response = self.client.delete(self.manage_url)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_204_NO_CONTENT
+        )
+
+        self.assertFalse(
+            Destination.objects.filter(
+                id=self.destination.id
+            ).exists()
+        )
+
+    def test_unauthenticated_user_cannot_delete_destination(self):
+        response = self.client.delete(self.manage_url)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_401_UNAUTHORIZED
+        )
+
+        self.assertTrue(
+            Destination.objects.filter(
+                id=self.destination.id
             ).exists()
         )
