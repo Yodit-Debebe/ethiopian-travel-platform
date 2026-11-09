@@ -56,3 +56,23 @@ class LoginSerializer(serializers.Serializer):
 
         attrs["user"] = user
         return attrs
+
+class UserResponseSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    username = serializers.CharField()
+    email = serializers.EmailField(allow_blank=True)
+
+
+class LoginResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+    token = serializers.CharField()
+    user = UserResponseSerializer()
+
+
+class RegisterResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+    user = UserResponseSerializer()
+
+
+class LogoutResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
