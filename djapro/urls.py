@@ -48,6 +48,7 @@ urlpatterns = [
     path("api/bookings/", include("bookings.urls")),
     path("api/payments/", include("payments.urls")),
     path("api/reviews/", include("reviews.urls")),
+    path("api/wishlist/", include("wishlist.urls")),
 ]
 
 if settings.DEBUG:
