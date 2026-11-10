@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     'travello',
     'accounts',
+    'bookings',
     "rest_framework",
     'rest_framework.authtoken',
     'drf_spectacular',
