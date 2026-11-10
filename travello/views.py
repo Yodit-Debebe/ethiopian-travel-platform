@@ -1,26 +1,31 @@
-from django.shortcuts import get_object_or_404, redirect, render
 
-from travello.models import Destination
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Avg, Count, Q
+
+from travello.models import Destination
 
 from rest_framework import generics, filters
-from .serializers import DestinationSerializer
 from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAdminUser
 
-# Create your views here.
+from .serializers import DestinationSerializer
+
+
+# Template Views
 
 def home(request):
     destinations = Destination.objects.all()
-    return render(request, 'home.html',{'destinations': destinations})
+    return render(request, 'home.html', {'destinations': destinations})
 
 
 def welcome_page(request):
     return render(request, 'welcome.html')
 
-@login_required(login_url='login')  # ⬅ user must login
+
+@login_required(login_url='login')
 def payment(request, id):
     destination = get_object_or_404(Destination, pk=id)
 
@@ -38,6 +43,7 @@ def payment(request, id):
 
     return render(request, 'payment.html', {'destination': destination})
 
+
 def contact(request):
     if request.method == "POST":
         name = request.POST.get('name', '').strip()
@@ -48,42 +54,59 @@ def contact(request):
             messages.error(request, "Please fill in all fields.")
             return render(request, "contact.html")
 
-        # Here you could save to DB or send an email
         messages.success(request, "Thank you! Your message has been sent.")
-        return redirect('contact')  # Redirect to clear the form
+        return redirect('contact')
 
     return render(request, "contact.html")
 
 
-# API Views
+# API Pagination
+
 class DestinationPagination(PageNumberPagination):
     page_size = 3
     page_size_query_param = "page_size"
     max_page_size = 6
 
+
+# Destination List API
+
 class DestinationListAPIView(generics.ListAPIView):
+
     permission_classes = [AllowAny]
-    queryset = Destination.objects.all().order_by("id")
     serializer_class = DestinationSerializer
     pagination_class = DestinationPagination
-
 
     filter_backends = [
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
 
-    # Fields users can search
     search_fields = ["name", "desc"]
 
-    # Fields users can use for sorting
-    ordering_fields = ["name", "price", "id"]
+    ordering_fields = [
+        "name",
+        "price",
+        "id",
+        "average_rating",
+    ]
 
-    # Default sorting
     ordering = ["id"]
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+
+        queryset = Destination.objects.annotate(
+            average_rating=Avg(
+                "reviews__rating",
+                filter=Q(reviews__status="APPROVED")
+            ),
+            review_count=Count(
+                "reviews",
+                filter=Q(reviews__status="APPROVED"),
+                distinct=True
+            )
+        )
+
+        # Price filtering
 
         min_price = self.request.query_params.get("min_price")
         max_price = self.request.query_params.get("max_price")
@@ -108,23 +131,73 @@ class DestinationListAPIView(generics.ListAPIView):
         if max_price is not None:
             queryset = queryset.filter(price__lte=max_price)
 
-        return queryset
+        # Category filtering
+
+        category = self.request.query_params.get("category")
+
+        if category:
+            category = category.upper()
+
+            valid_categories = Destination.Category.values
+
+            if category not in valid_categories:
+                raise ValidationError({
+                    "category": (
+                        f"Invalid category. Choose from: "
+                        f"{', '.join(valid_categories)}"
+                    )
+                })
+
+            queryset = queryset.filter(category=category)
+
+        # Minimum rating filtering
+
+        min_rating = self.request.query_params.get("min_rating")
+
+        if min_rating is not None:
+            try:
+                min_rating = float(min_rating)
+            except ValueError:
+                raise ValidationError({
+                    "min_rating": "min_rating must be a number."
+                })
+
+            if not 1 <= min_rating <= 5:
+                raise ValidationError({
+                    "min_rating": "min_rating must be between 1 and 5."
+                })
+
+            queryset = queryset.filter(
+                average_rating__gte=min_rating
+            )
+
+        return queryset.order_by("id")
 
 
+# Destination Detail API
 
 class DestinationDetailAPIView(generics.RetrieveAPIView):
+
     queryset = Destination.objects.all()
     serializer_class = DestinationSerializer
     permission_classes = [AllowAny]
 
 
+# Destination Create API
+
 class DestinationCreateAPIView(generics.CreateAPIView):
+
     queryset = Destination.objects.all()
     serializer_class = DestinationSerializer
     permission_classes = [IsAdminUser]
 
 
-class DestinationUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
+# Destination Update/Delete API
+
+class DestinationUpdateDeleteAPIView(
+    generics.RetrieveUpdateDestroyAPIView
+):
+
     queryset = Destination.objects.all()
     serializer_class = DestinationSerializer
     permission_classes = [IsAdminUser]
