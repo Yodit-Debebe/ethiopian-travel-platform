@@ -46,6 +46,7 @@ urlpatterns = [
         name='redoc',
     ),
     path("api/bookings/", include("bookings.urls")),
+    path("api/payments/", include("payments.urls")),
 ]
 
 if settings.DEBUG:

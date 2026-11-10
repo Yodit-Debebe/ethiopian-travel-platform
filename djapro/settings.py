@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'travello',
     'accounts',
     'bookings',
+    'payments',
     "rest_framework",
     'rest_framework.authtoken',
     'drf_spectacular',
