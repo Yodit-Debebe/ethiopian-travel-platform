@@ -1,15 +1,22 @@
-from rest_framework.test import APITestCase
-from rest_framework import status
-from django.urls import reverse
+
+from datetime import date, timedelta
+from decimal import Decimal
+from io import BytesIO
+
+from PIL import Image
 
 from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse
+
+from rest_framework import status
+from rest_framework.test import APITestCase
+from rest_framework.authtoken.models import Token
+
+from bookings.models import Booking
+from reviews.models import Review
 
 from .models import Destination
-
-from io import BytesIO
-from PIL import Image
 
 
 class DestinationAPITests(APITestCase):
@@ -20,27 +27,57 @@ class DestinationAPITests(APITestCase):
                 name="Abay",
                 desc="Beautiful Blue Nile destination",
                 price=700,
-                img="pics/abay.jpg"
+                img="pics/abay.jpg",
+                category=Destination.Category.NATURAL
             ),
             Destination.objects.create(
                 name="Hawassa",
                 desc="Beautiful lakeside destination",
                 price=750,
-                img="pics/hawassa.jpg"
+                img="pics/hawassa.jpg",
+                category=Destination.Category.LAKE
             ),
             Destination.objects.create(
                 name="Axum",
                 desc="Historic destination",
                 price=650,
-                img="pics/axum.jpg"
+                img="pics/axum.jpg",
+                category=Destination.Category.HISTORICAL
             ),
             Destination.objects.create(
                 name="Fasilides Palaces",
                 desc="Historic palace complex",
                 price=600,
-                img="pics/fasilides.jpg"
+                img="pics/fasilides.jpg",
+                category=Destination.Category.HISTORICAL
             ),
         ]
+
+    def create_approved_review(self, destination, rating):
+        user = User.objects.create_user(
+            username=f"reviewer_{destination.id}_{rating}",
+            password="testpassword123"
+        )
+
+        booking = Booking.objects.create(
+            user=user,
+            destination=destination,
+            travel_date=date.today() - timedelta(days=30),
+            number_of_travelers=1,
+            total_price=Decimal(str(destination.price)),
+            status=Booking.BookingStatus.CONFIRMED
+        )
+
+        return Review.objects.create(
+            booking=booking,
+            user=user,
+            destination=destination,
+            rating=rating,
+            comment="Excellent destination!",
+            status=Review.ModerationStatus.APPROVED
+        )
+
+    # EXISTING DESTINATION API TESTS
 
     def test_destination_list(self):
         url = reverse("destination-list-api")
@@ -90,6 +127,144 @@ class DestinationAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 3)
 
+    # CATEGORY FILTERING TESTS
+
+    def test_category_filter(self):
+        url = reverse("destination-list-api")
+
+        response = self.client.get(
+            url,
+            {"category": "HISTORICAL"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 2)
+
+        names = [
+            item["name"]
+            for item in response.data["results"]
+        ]
+
+        self.assertIn("Axum", names)
+        self.assertIn("Fasilides Palaces", names)
+
+    def test_invalid_category_returns_bad_request(self):
+        url = reverse("destination-list-api")
+
+        response = self.client.get(
+            url,
+            {"category": "INVALID"}
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST
+        )
+
+    def test_category_and_price_filters_together(self):
+        url = reverse("destination-list-api")
+
+        response = self.client.get(
+            url,
+            {
+                "category": "HISTORICAL",
+                "min_price": 650
+            }
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(
+            response.data["results"][0]["name"],
+            "Axum"
+        )
+
+    # RATING FILTERING TESTS
+
+    def test_minimum_rating_filter(self):
+        abay = self.destinations[0]
+        hawassa = self.destinations[1]
+        axum = self.destinations[2]
+
+        self.create_approved_review(abay, 5)
+        self.create_approved_review(hawassa, 3)
+        self.create_approved_review(axum, 4)
+
+        url = reverse("destination-list-api")
+
+        response = self.client.get(
+            url,
+            {"min_rating": 4}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 2)
+
+        names = {
+            item["name"]
+            for item in response.data["results"]
+        }
+
+        self.assertEqual(names, {"Abay", "Axum"})
+
+    def test_invalid_minimum_rating_returns_bad_request(self):
+        url = reverse("destination-list-api")
+
+        invalid_values = ["abc", "0", "6"]
+
+        for value in invalid_values:
+            with self.subTest(min_rating=value):
+                response = self.client.get(
+                    url,
+                    {"min_rating": value}
+                )
+
+                self.assertEqual(
+                    response.status_code,
+                    status.HTTP_400_BAD_REQUEST
+                )
+
+    def test_rating_ordering(self):
+        abay = self.destinations[0]
+        hawassa = self.destinations[1]
+        axum = self.destinations[2]
+
+        self.create_approved_review(abay, 5)
+        self.create_approved_review(hawassa, 3)
+        self.create_approved_review(axum, 4)
+
+        url = reverse("destination-list-api")
+
+        response = self.client.get(
+            url,
+            {"ordering": "-average_rating"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        results = response.data["results"]
+
+        self.assertEqual(results[0]["name"], "Abay")
+        self.assertEqual(results[1]["name"], "Axum")
+        self.assertEqual(results[2]["name"], "Hawassa")
+
+        self.assertEqual(results[0]["average_rating"], 5)
+        self.assertEqual(results[1]["average_rating"], 4)
+        self.assertEqual(results[2]["average_rating"], 3)
+
+    def test_destination_response_includes_rating_information(self):
+        url = reverse("destination-list-api")
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        destination = response.data["results"][0]
+
+        self.assertIn("category", destination)
+        self.assertIn("average_rating", destination)
+        self.assertIn("review_count", destination)
+
 
 class DestinationCreationAPITests(APITestCase):
 
@@ -113,7 +288,6 @@ class DestinationCreationAPITests(APITestCase):
 
         self.url = reverse("destination-create-api")
 
-        # Temporary destination for update and delete tests
         self.destination = Destination.objects.create(
             name="Test Destination",
             desc="Original description",

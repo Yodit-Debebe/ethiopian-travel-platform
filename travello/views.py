@@ -2,8 +2,8 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Avg, Count, Q
-
+from django.db.models import Avg, Count, Q, Value, FloatField
+from django.db.models.functions import Coalesce
 from travello.models import Destination
 
 from rest_framework import generics, filters
@@ -95,16 +95,20 @@ class DestinationListAPIView(generics.ListAPIView):
     def get_queryset(self):
 
         queryset = Destination.objects.annotate(
-            average_rating=Avg(
-                "reviews__rating",
-                filter=Q(reviews__status="APPROVED")
-            ),
-            review_count=Count(
-                "reviews",
-                filter=Q(reviews__status="APPROVED"),
-                distinct=True
-            )
-        )
+    average_rating=Coalesce(
+        Avg(
+            "reviews__rating",
+            filter=Q(reviews__status="APPROVED")
+        ),
+        Value(0.0),
+        output_field=FloatField()
+    ),
+    review_count=Count(
+        "reviews",
+        filter=Q(reviews__status="APPROVED"),
+        distinct=True
+    )
+)
 
         # Price filtering
 
@@ -171,7 +175,7 @@ class DestinationListAPIView(generics.ListAPIView):
                 average_rating__gte=min_rating
             )
 
-        return queryset.order_by("id")
+        return queryset
 
 
 # Destination Detail API
