@@ -1,0 +1,63 @@
+/* Destination Sorting */
+
+.sorting-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 25px 0;
+}
+
+.sorting-container label {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.sorting-container select {
+  min-width: 190px;
+  padding: 11px 14px;
+  border: 1px solid #e5dfd5;
+  border-radius: 7px;
+  background: #fff;
+  color: #333;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.sorting-container select:focus {
+  border-color: #d8a75c;
+  box-shadow: 0 0 0 2px rgba(216, 167, 92, 0.15);
+}
+
+@media (max-width: 600px) {
+  .sorting-container {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .sorting-container select {
+    width: 100%;
+  }
+}
+
+/* Recently viewed - clear history button */
+.clear-history-button {
+  padding: 10px 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: transparent;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-history-button:hover {
+  background: #f3f4f6;
+  color: #111827;
+  border-color: #9ca3af;
+}
+

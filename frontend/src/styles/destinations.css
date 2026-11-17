@@ -1,0 +1,159 @@
+/* Consistent destination card descriptions */
+.destination-region {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #777;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+  min-height: 4.05em;
+}
+
+/* Destination details page */
+
+.destination-details {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 24px 60px;
+}
+
+.back-button {
+  border: none;
+  background: none;
+  color: #555;
+  font-size: 1rem;
+  margin-bottom: 30px;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  color: #c58b36;
+}
+
+.details-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 45px;
+  align-items: start;
+}
+
+.details-image img {
+  width: 100%;
+  height: 520px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.details-content h1 {
+  font-size: 2.7rem;
+  margin: 18px 0 12px;
+  color: #242424;
+}
+
+.details-content .image-category {
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.details-rating {
+  color: #c58b36;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+.details-description {
+  color: #666;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.details-price {
+  margin-top: 35px;
+  padding: 22px;
+  background: #f8f5ef;
+  border-radius: 12px;
+}
+
+.details-price span,
+.details-price p {
+  color: #777;
+  margin: 0;
+}
+
+.details-price h2 {
+  font-size: 2rem;
+  color: #b47b29;
+  margin: 8px 0;
+}
+
+.details-book-button {
+  display: inline-block;
+  margin-top: 25px;
+  padding: 15px 25px;
+  background: #c58b36;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.details-book-button:hover {
+  background: #a97024;
+}
+
+.destination-footer .details-link {
+  border: none;
+  background: none;
+  color: #b47b29;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: inherit;
+}
+
+.destination-footer .details-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .details-layout {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .details-image img {
+    height: 300px;
+  }
+
+  .details-content h1 {
+    font-size: 2rem;
+  }
+
+  .destination-details {
+    margin-top: 30px;
+  }
+}
+
+/* Fix category label on destination details page */
+
+ .details-content .image-category {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+
+  margin-top: 12px;
+  padding: 8px 16px;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+
+  background-color: #eaf4ed;
+  color: #276749;
+
+  border-radius: 20px;
+}
+

@@ -1,0 +1,368 @@
+/* ================================
+   REVIEWS MANAGEMENT
+================================ */
+
+.reviews-page {
+  max-width: 1100px;
+  min-height: 65vh;
+  margin: 50px auto;
+  padding: 0 24px 70px;
+}
+
+.reviews-heading {
+  margin: 25px 0 35px;
+}
+
+.reviews-heading h1 {
+  font-size: 2.5rem;
+  color: #242424;
+  margin: 12px 0;
+}
+
+.reviews-heading p,
+.review-section > p {
+  color: #777;
+  line-height: 1.7;
+}
+
+.review-section {
+  margin-top: 35px;
+  padding: 28px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+}
+
+.review-section h2 {
+  color: #292929;
+  margin: 0 0 12px;
+  font-size: 1.5rem;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.review-form label,
+.review-card label {
+  font-weight: 600;
+  color: #444;
+}
+
+.review-form select,
+.review-form textarea,
+.review-card select,
+.review-card textarea {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  color: #333;
+}
+
+.review-form textarea,
+.review-card textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.review-submit-button {
+  align-self: flex-start;
+  padding: 13px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #c58b36;
+  color: white;
+  font-weight: 600;
+}
+
+.review-submit-button:hover {
+  background: #a97024;
+}
+
+.review-submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.reviews-empty {
+  margin-top: 20px;
+  padding: 22px;
+  background: #f8f6f2;
+  color: #777;
+  border-radius: 10px;
+  line-height: 1.7;
+}
+
+.review-list {
+  display: grid;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.review-card {
+  padding: 22px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.review-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.review-card-header h3 {
+  margin: 0;
+  color: #292929;
+}
+
+.review-stars {
+  margin: 15px 0;
+  color: #c58b36;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+
+.review-card > p {
+  color: #555;
+  line-height: 1.7;
+}
+
+.review-card small {
+  color: #888;
+}
+
+.review-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.review-status.pending {
+  background: #fff3d8;
+  color: #946200;
+}
+
+.review-status.approved {
+  background: #e5f5e9;
+  color: #276749;
+}
+
+.review-status.rejected {
+  background: #fde8e8;
+  color: #b42318;
+}
+
+.review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.review-actions button,
+.review-card form button {
+  padding: 9px 16px;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  background: white;
+  color: #444;
+  font-weight: 600;
+}
+
+.review-actions button:hover,
+.review-card form button:hover {
+  background: #f5f5f5;
+}
+
+.review-actions .approve-review-button {
+  background: #276749;
+  color: white;
+  border-color: #276749;
+}
+
+.review-actions .reject-review-button {
+  background: #b42318;
+  color: white;
+  border-color: #b42318;
+}
+
+.reviews-error,
+.reviews-message {
+  padding: 14px 18px;
+  margin: 15px 0;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+.reviews-error {
+  background: #fde8e8;
+  color: #b42318;
+}
+
+.reviews-message {
+  background: #e5f5e9;
+  color: #276749;
+}
+
+.review-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .reviews-page {
+    margin-top: 30px;
+    padding: 0 16px 45px;
+  }
+
+  .reviews-heading h1 {
+    font-size: 2rem;
+  }
+
+  .review-section {
+    padding: 18px;
+  }
+
+  .review-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+
+/* =========================================
+   DESTINATION DETAILS - PUBLIC REVIEWS
+========================================= */
+
+.destination-reviews {
+  max-width: 1200px;
+  margin: 70px auto 40px;
+  padding: 45px 30px;
+  border-top: 1px solid #e8e5df;
+}
+
+.destination-reviews .reviews-heading {
+  margin-bottom: 32px;
+}
+
+.destination-reviews .reviews-heading h2 {
+  margin: 12px 0;
+  font-size: 2rem;
+  color: #252525;
+}
+
+.destination-reviews .reviews-heading p {
+  color: #777;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.destination-reviews .reviews-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.destination-reviews .review-card {
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #eee9e1;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.035);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.destination-reviews .review-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+}
+
+.destination-reviews .review-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.destination-reviews .review-card-header h3 {
+  margin: 0 0 6px;
+  color: #252525;
+  font-size: 1rem;
+}
+
+.destination-reviews .review-card-header span {
+  color: #888;
+  font-size: 0.82rem;
+}
+
+.destination-reviews .review-stars {
+  color: #e5a323;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.destination-reviews .review-stars span {
+  color: #d8d8d8;
+}
+
+.destination-reviews .review-card > p {
+  margin: 0;
+  color: #626262;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.destination-reviews .no-reviews {
+  padding: 25px;
+  background: #faf8f4;
+  border-radius: 10px;
+  color: #777;
+  text-align: center;
+  line-height: 1.7;
+}
+
+.destination-reviews .reviews-error {
+  border-radius: 10px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .destination-reviews {
+    margin-top: 45px;
+    padding: 30px 18px;
+  }
+
+  .destination-reviews .reviews-list {
+    grid-template-columns: 1fr;
+  }
+
+  .destination-reviews .reviews-heading h2 {
+    font-size: 1.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .destination-reviews .review-card {
+    padding: 18px;
+  }
+
+  .destination-reviews .review-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+
