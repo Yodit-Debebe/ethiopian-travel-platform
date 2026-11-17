@@ -9,6 +9,9 @@ from rest_framework.response import Response
 
 from .models import Payment
 from .serializers import PaymentSerializer
+from drf_spectacular.utils import extend_schema, inline_serializer
+
+from rest_framework import serializers as drf_serializers
 
 
 class PaymentListCreateAPIView(generics.ListCreateAPIView):
@@ -31,6 +34,33 @@ class PaymentListCreateAPIView(generics.ListCreateAPIView):
 class PaymentSimulationAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+    request=inline_serializer(
+        name="PaymentSimulationRequest",
+        fields={
+            "result": drf_serializers.ChoiceField(
+                choices=[
+                    Payment.PaymentStatus.SUCCESSFUL,
+                    Payment.PaymentStatus.FAILED,
+                ]
+            ),
+        },
+    ),
+    responses={
+        200: inline_serializer(
+            name="PaymentSimulationResponse",
+            fields={
+                "message": drf_serializers.CharField(),
+                "payment": PaymentSerializer(),
+            },
+        ),
+        400: inline_serializer(
+            name="PaymentSimulationError",
+            fields={"error": drf_serializers.CharField()},
+        ),
+    },
+)
 
     @transaction.atomic
     def post(self, request, pk):
@@ -89,6 +119,7 @@ class AdminPaymentListAPIView(generics.ListAPIView):
             "booking__destination"
         )
         .all()
+        .order_by("-created_at")
     )
 
     serializer_class = PaymentSerializer
@@ -98,6 +129,23 @@ class AdminPaymentListAPIView(generics.ListAPIView):
 class AdminPaymentRefundAPIView(APIView):
 
     permission_classes = [IsAdminUser]
+
+    @extend_schema(
+    request=None,
+    responses={
+        200: inline_serializer(
+            name="AdminPaymentRefundResponse",
+            fields={
+                "message": drf_serializers.CharField(),
+                "payment": PaymentSerializer(),
+            },
+        ),
+        400: inline_serializer(
+            name="AdminPaymentRefundError",
+            fields={"error": drf_serializers.CharField()},
+        ),
+    },
+)
 
     @transaction.atomic
     def post(self, request, pk):

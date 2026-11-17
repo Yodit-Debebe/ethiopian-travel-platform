@@ -8,6 +8,7 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.authtoken.models import Token
 
 from drf_spectacular.utils import extend_schema, OpenApiResponse
@@ -18,6 +19,7 @@ from .serializers import (
     LoginResponseSerializer,
     RegisterResponseSerializer,
     LogoutResponseSerializer,
+    UserProfileSerializer,
 )
 
 
@@ -94,6 +96,9 @@ def login(request):
 class RegisterAPIView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth"
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -107,6 +112,8 @@ class RegisterAPIView(generics.CreateAPIView):
                     "id": user.id,
                     "username": user.username,
                     "email": user.email,
+                    "is_staff": user.is_staff,
+                    "is_superuser": user.is_superuser,
                 },
             },
             status=status.HTTP_201_CREATED,
@@ -119,6 +126,8 @@ class RegisterAPIView(generics.CreateAPIView):
 
 class LoginAPIView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth"
 
     @extend_schema(
         request=LoginSerializer,
@@ -151,6 +160,8 @@ class LoginAPIView(APIView):
                     "id": user.id,
                     "username": user.username,
                     "email": user.email,
+                    "is_staff": user.is_staff,
+                    "is_superuser": user.is_superuser,
                 },
             },
             status=status.HTTP_200_OK,
@@ -185,3 +196,14 @@ class LogoutAPIView(APIView):
             {"message": "Logout successful."},
             status=status.HTTP_200_OK
         )
+
+# -------------------------
+# User Profile API
+# -------------------------
+
+class UserProfileAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user

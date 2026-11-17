@@ -53,6 +53,13 @@ class Review(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(rating__gte=1, rating__lte=5),
+                name="review_rating_between_1_and_5"
+            )
+        ]
+
     def __str__(self):
         return (
             f"{self.user.username} - "

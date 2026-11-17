@@ -20,6 +20,12 @@ urlpatterns = [
     'api/logout/',
     views.LogoutAPIView.as_view(),
     name='logout-api'
-),
+    ),
+
+    path(
+        'api/profile/',
+        views.UserProfileAPIView.as_view(),
+        name='profile-api'
+    ),
 
 ]

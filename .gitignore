@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+.pytest_cache/
+.coverage
 
 # Virtual environments
 .venv/
@@ -19,22 +21,14 @@ media/
 .env.*
 !.env.example
 
-# Local database (keep the original backup outside Git)
+# Local databases
 db.sqlite3
 
-# Frontend dependencies (future React app)
+# Frontend dependencies and build output
 node_modules/
 dist/
 
-# macOS / editors
+# macOS and editors
 .DS_Store
 .vscode/
 .idea/
-
-# Python
-.venv/
-venv/
-__pycache__/
-*.py[cod]
-.pytest_cache/
-.coverage

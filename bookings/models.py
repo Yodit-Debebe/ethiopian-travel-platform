@@ -41,5 +41,13 @@ class Booking(models.Model):
 
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(number_of_travelers__gte=1),
+                name="booking_number_of_travelers_gte_one"
+            )
+        ]
+
     def __str__(self):
         return f"Booking #{self.id} - {self.destination.name}"

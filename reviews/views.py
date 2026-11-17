@@ -13,6 +13,8 @@ from rest_framework.response import Response
 
 from .models import Review
 from .serializers import ReviewSerializer
+from drf_spectacular.utils import extend_schema, inline_serializer
+from rest_framework import serializers as drf_serializers
 
 
 class ReviewListAPIView(generics.ListAPIView):
@@ -95,6 +97,33 @@ class AdminReviewListAPIView(generics.ListAPIView):
 class AdminReviewModerationAPIView(APIView):
 
     permission_classes = [IsAdminUser]
+
+    @extend_schema(
+    request=inline_serializer(
+        name="AdminReviewModerationRequest",
+        fields={
+            "status": drf_serializers.ChoiceField(
+                choices=[
+                    Review.ModerationStatus.APPROVED,
+                    Review.ModerationStatus.REJECTED,
+                ]
+            ),
+        },
+    ),
+    responses={
+        200: inline_serializer(
+            name="AdminReviewModerationResponse",
+            fields={
+                "message": drf_serializers.CharField(),
+                "review": ReviewSerializer(),
+            },
+        ),
+        400: inline_serializer(
+            name="AdminReviewModerationError",
+            fields={"error": drf_serializers.CharField()},
+        ),
+    },
+)
 
     @transaction.atomic
     def patch(self, request, pk):

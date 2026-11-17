@@ -10,6 +10,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAdminUser
+from drf_spectacular.utils import extend_schema, inline_serializer
+from rest_framework import serializers as drf_serializers
 
 
 class BookingListCreateAPIView(generics.ListCreateAPIView):
@@ -29,6 +31,23 @@ class BookingListCreateAPIView(generics.ListCreateAPIView):
 class BookingCancelAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+    request=None,
+    responses={
+        200: inline_serializer(
+            name="BookingCancelResponse",
+            fields={
+                "message": drf_serializers.CharField(),
+                "booking": BookingSerializer(),
+            },
+        ),
+        400: inline_serializer(
+            name="BookingCancelError",
+            fields={"error": drf_serializers.CharField()},
+        ),
+    },
+)
 
     def post(self, request, pk):
 
@@ -77,6 +96,34 @@ class AdminBookingManageAPIView(APIView):
 
     permission_classes = [IsAdminUser]
 
+    @extend_schema(
+        request=inline_serializer(
+            name="AdminBookingManageRequest",
+            fields={
+                "status": drf_serializers.ChoiceField(
+                    choices=[
+                        Booking.BookingStatus.CONFIRMED,
+                        Booking.BookingStatus.CANCELLED,
+                    ]
+                ),
+            },
+        ),
+        responses={
+            200: inline_serializer(
+                name="AdminBookingManageResponse",
+                fields={
+                    "message": drf_serializers.CharField(),
+                    "booking": BookingSerializer(),
+                },
+            ),
+            400: inline_serializer(
+                name="AdminBookingManageError",
+                fields={
+                    "error": drf_serializers.CharField(),
+                },
+            ),
+        },
+    )
     def patch(self, request, pk):
 
         booking = get_object_or_404(Booking, pk=pk)

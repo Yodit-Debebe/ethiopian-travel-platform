@@ -7,6 +7,12 @@ from .models import Destination
 
 class DestinationSerializer(serializers.ModelSerializer):
 
+    price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        coerce_to_string=False
+    )
+
     average_rating = serializers.SerializerMethodField()
     review_count = serializers.SerializerMethodField()
 
@@ -24,8 +30,7 @@ class DestinationSerializer(serializers.ModelSerializer):
             "review_count",
         ]
 
-    def get_average_rating(self, obj):
-
+    def get_average_rating(self, obj) -> float:
         if hasattr(obj, "average_rating"):
             average = obj.average_rating
         else:
@@ -37,8 +42,7 @@ class DestinationSerializer(serializers.ModelSerializer):
 
         return round(average, 2) if average is not None else 0
 
-    def get_review_count(self, obj):
-
+    def get_review_count(self, obj) -> int:
         if hasattr(obj, "review_count"):
             return obj.review_count
 

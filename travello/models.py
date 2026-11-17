@@ -12,11 +12,11 @@ class Destination(models.Model):
         ADVENTURE = "ADVENTURE", "Adventure"
         OTHER = "OTHER", "Other"
 
-    name = models.CharField(max_length=25)
+    name = models.CharField(max_length=100)
 
     desc = models.TextField()
 
-    price = models.IntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
     img = models.ImageField(upload_to="pics")
 
