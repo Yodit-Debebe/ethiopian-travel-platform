@@ -30,7 +30,7 @@ function Profile({ onBack, onProfileUpdated }) {
         setLoading(true)
         setError('')
 
-        const data = await apiRequest('/accounts/api/profile/')
+        const data = await apiRequest('/api/auth/profile/')
 
         setProfile({
           username: data.username || '',
@@ -90,7 +90,7 @@ function Profile({ onBack, onProfileUpdated }) {
       const formData = new FormData()
       formData.append('profile_picture', selectedPicture)
 
-      const data = await apiRequest('/accounts/api/profile/', {
+      const data = await apiRequest('/api/auth/profile/', {
         method: 'PATCH',
         body: formData,
       })
@@ -123,7 +123,7 @@ function Profile({ onBack, onProfileUpdated }) {
       setError('')
       setSuccess('')
 
-      const data = await apiRequest('/accounts/api/profile/', {
+      const data = await apiRequest('/api/auth/profile/', {
         method: 'PATCH',
         body: JSON.stringify({
           username: profile.username,

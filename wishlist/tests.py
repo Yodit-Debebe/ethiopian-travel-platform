@@ -80,7 +80,7 @@ class WishlistAPITests(APITestCase):
         )
 
         self.assertEqual(
-            len(response.data),
+            len(response.data["results"]),
             1
         )
     def test_customer_cannot_view_another_users_wishlist(self):
@@ -98,7 +98,7 @@ class WishlistAPITests(APITestCase):
         )
 
         self.assertEqual(
-            len(response.data),
+            len(response.data["results"]),
             0
         )
     def test_customer_cannot_add_same_destination_twice(self):

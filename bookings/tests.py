@@ -101,7 +101,7 @@ class BookingAPITestCase(TestCase):
         response = self.client.get("/api/bookings/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data["results"]), 0)
 
     
     def test_unauthenticated_user_cannot_access_bookings(self):

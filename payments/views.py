@@ -28,6 +28,7 @@ class PaymentListCreateAPIView(generics.ListCreateAPIView):
                 "booking__user",
                 "booking__destination"
             )
+            .order_by("-created_at")
         )
 
 

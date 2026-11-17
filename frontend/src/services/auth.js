@@ -2,14 +2,14 @@
 import { apiRequest } from './api'
 
 export async function registerUser(userData) {
-  return apiRequest('/accounts/api/register/', {
+  return apiRequest('/api/auth/register/', {
     method: 'POST',
     body: JSON.stringify(userData),
   })
 }
 
 export async function loginUser(credentials) {
-  const data = await apiRequest('/accounts/api/login/', {
+  const data = await apiRequest('/api/auth/login/', {
     method: 'POST',
     body: JSON.stringify(credentials),
   })
@@ -22,7 +22,7 @@ export async function loginUser(credentials) {
 
 export async function logoutUser() {
   try {
-    await apiRequest('/accounts/api/logout/', {
+    await apiRequest('/api/auth/logout/', {
       method: 'POST',
     })
   } finally {

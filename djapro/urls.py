@@ -19,6 +19,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('travello.urls')),
     path('accounts/', include('accounts.urls')),
+    path('api/auth/', include('accounts.api_urls')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path(
         'api/docs/',

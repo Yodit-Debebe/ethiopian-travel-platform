@@ -241,6 +241,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_PAGINATION_CLASS': (
+        'djapro.pagination.StandardResultsSetPagination'
+    ),
+    'PAGE_SIZE': 20,
     'DEFAULT_THROTTLE_RATES': {
         'auth': '20/min',
     },

@@ -225,7 +225,7 @@ class ReviewAPITestCase(TestCase):
         response = self.client.get("/api/reviews/my/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_customer_can_edit_own_review(self):
 
@@ -290,7 +290,7 @@ class ReviewAPITestCase(TestCase):
         response = self.client.get("/api/reviews/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data["results"]), 0)
 
     def test_public_users_can_see_approved_reviews(self):
 
@@ -303,7 +303,7 @@ class ReviewAPITestCase(TestCase):
         response = self.client.get("/api/reviews/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_customer_cannot_access_admin_reviews(self):
 
@@ -320,7 +320,7 @@ class ReviewAPITestCase(TestCase):
         response = self.client.get("/api/reviews/admin/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_admin_can_approve_review(self):
 

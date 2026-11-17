@@ -164,7 +164,7 @@ class PaymentAPITestCase(TestCase):
         response = self.client.get("/api/payments/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_customer_cannot_view_another_customers_payments(self):
 
@@ -182,7 +182,7 @@ class PaymentAPITestCase(TestCase):
         response = self.client.get("/api/payments/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data["results"]), 0)
 
     def test_unauthenticated_user_cannot_access_payments(self):
 
@@ -299,7 +299,7 @@ class PaymentAPITestCase(TestCase):
         response = self.client.get("/api/payments/admin/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_admin_can_refund_successful_payment(self):
 

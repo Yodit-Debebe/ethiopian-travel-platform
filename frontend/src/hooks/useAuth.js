@@ -14,7 +14,7 @@ function useAuth() {
       if (!currentUserId) return
 
       try {
-        const data = await apiRequest('/accounts/api/profile/', {
+        const data = await apiRequest('/api/auth/profile/', {
           signal: controller.signal,
         })
 
