@@ -13,6 +13,7 @@ from rest_framework.authtoken.models import Token
 
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 
+from .authentication import token_is_expired
 from .serializers import (
     LoginSerializer,
     RegisterSerializer,
@@ -151,6 +152,10 @@ class LoginAPIView(APIView):
         user = serializer.validated_data["user"]
 
         token, created = Token.objects.get_or_create(user=user)
+
+        if not created and token_is_expired(token):
+            token.delete()
+            token = Token.objects.create(user=user)
 
         return Response(
             {

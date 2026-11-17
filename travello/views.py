@@ -1,6 +1,7 @@
 
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.core.mail import send_mail
+from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.db.models import Avg, Count, Q, Value, FloatField
 from django.db.models.functions import Coalesce
@@ -25,25 +26,6 @@ def welcome_page(request):
     return render(request, 'welcome.html')
 
 
-@login_required(login_url='login')
-def payment(request, id):
-    destination = get_object_or_404(Destination, pk=id)
-
-    if request.method == 'POST':
-        name = request.POST.get('full_name')
-        email = request.POST.get('email')
-        method = request.POST.get('method')
-
-        return render(request, 'payment_success.html', {
-            'destination': destination,
-            'name': name,
-            'email': email,
-            'method': method,
-        })
-
-    return render(request, 'payment.html', {'destination': destination})
-
-
 def contact(request):
     if request.method == "POST":
         name = request.POST.get('name', '').strip()
@@ -52,6 +34,23 @@ def contact(request):
 
         if not name or not email or not message:
             messages.error(request, "Please fill in all fields.")
+            return render(request, "contact.html")
+
+        try:
+            send_mail(
+                subject=f"New contact message from {name}",
+                message=(
+                    f"From: {name} <{email}>\n\n"
+                    f"{message}"
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.CONTACT_EMAIL],
+            )
+        except Exception:
+            messages.error(
+                request,
+                "Sorry, your message could not be sent. Please try again."
+            )
             return render(request, "contact.html")
 
         messages.success(request, "Thank you! Your message has been sent.")

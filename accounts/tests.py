@@ -1,5 +1,9 @@
 
+from datetime import timedelta
+
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
@@ -79,4 +83,51 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(
             response.status_code,
             status.HTTP_401_UNAUTHORIZED
+        )
+
+    def expire_token(self, token):
+        Token.objects.filter(pk=token.pk).update(
+            created=(
+                timezone.now()
+                - timedelta(days=settings.AUTH_TOKEN_TTL_DAYS + 1)
+            )
+        )
+
+    def test_expired_token_is_rejected(self):
+        token = Token.objects.create(user=self.user)
+        self.expire_token(token)
+
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Token {token.key}"
+        )
+
+        response = self.client.get(reverse("profile-api"))
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_401_UNAUTHORIZED
+        )
+        self.assertFalse(
+            Token.objects.filter(pk=token.pk).exists()
+        )
+
+    def test_login_refreshes_expired_token(self):
+        token = Token.objects.create(user=self.user)
+        self.expire_token(token)
+
+        response = self.client.post(
+            reverse("login-api"),
+            {
+                "username": "testuser",
+                "password": "testpassword123",
+            }
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
+        )
+        self.assertNotEqual(response.data["token"], token.key)
+        self.assertTrue(
+            Token.objects.filter(user=self.user).exists()
         )

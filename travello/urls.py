@@ -5,7 +5,6 @@ from . import views
 urlpatterns = [
     path('', views.welcome_page, name='welcome'),
     path('home/', views.home, name='home'),
-    path('payment/<int:id>/', views.payment, name='payment'),
     path('contact/', views.contact, name='contact'),
 
     # Destination API

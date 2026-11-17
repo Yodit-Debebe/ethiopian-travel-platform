@@ -234,9 +234,23 @@ CORS_ALLOWED_ORIGINS = [
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.console.EmailBackend'
+    if DEBUG else
+    'django.core.mail.backends.smtp.EmailBackend'
+)
+DEFAULT_FROM_EMAIL = os.environ.get(
+    'DEFAULT_FROM_EMAIL',
+    'no-reply@ethioexplore.local'
+)
+CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', DEFAULT_FROM_EMAIL)
+
+AUTH_TOKEN_TTL_DAYS = int(os.environ.get('AUTH_TOKEN_TTL_DAYS', '7'))
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'accounts.authentication.ExpiringTokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',

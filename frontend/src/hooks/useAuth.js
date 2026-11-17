@@ -48,6 +48,17 @@ function useAuth() {
     }
   }, [currentUser])
 
+  // Clear the session when the API reports an expired token
+  useEffect(() => {
+    const handleExpired = () => setCurrentUser(null)
+
+    window.addEventListener('auth:expired', handleExpired)
+
+    return () => {
+      window.removeEventListener('auth:expired', handleExpired)
+    }
+  }, [])
+
   // Update the current user's profile
   const handleProfileUpdated = (updatedUser) => {
     setCurrentUser((previousUser) => {
