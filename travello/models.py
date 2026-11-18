@@ -1,5 +1,11 @@
 
+from django.core.validators import FileExtensionValidator
 from django.db import models
+
+from djapro.validators import (
+    ALLOWED_IMAGE_EXTENSIONS,
+    validate_image_size,
+)
 
 
 class Destination(models.Model):
@@ -18,7 +24,13 @@ class Destination(models.Model):
 
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
-    img = models.ImageField(upload_to="pics")
+    img = models.ImageField(
+        upload_to="pics",
+        validators=[
+            FileExtensionValidator(ALLOWED_IMAGE_EXTENSIONS),
+            validate_image_size,
+        ],
+    )
 
     category = models.CharField(
         max_length=20,

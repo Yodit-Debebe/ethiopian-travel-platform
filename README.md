@@ -97,7 +97,15 @@ cd ethiopian-travel-platform/frontend
 npm install
 ```
 
-### 4. Start the development server
+### 4. Configure the API URL
+
+```bash
+cp .env.example .env
+```
+
+Set `VITE_API_BASE_URL` if the backend runs somewhere other than `http://127.0.0.1:8000`.
+
+### 5. Start the development server
 
 ```bash
 npm run dev
@@ -131,6 +139,45 @@ npm run build
 ```
 
 The generated files are placed in the `dist/` directory.
+
+## Docker
+
+Run PostgreSQL, the Django backend, and the frontend with Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+- Frontend: `http://localhost:8080`
+- Backend API: `http://localhost:8000`
+- API documentation: `http://localhost:8000/api/docs/`
+
+The Compose stack uses development settings and keeps database and media files in named volumes.
+
+## Continuous Integration
+
+GitHub Actions runs the backend test suite against PostgreSQL and the frontend lint/build on pushes to `main` and on pull requests. See `.github/workflows/ci.yml`.
+
+## Troubleshooting
+
+If the frontend cannot load destinations, check that the backend is reachable:
+
+```bash
+curl http://127.0.0.1:8000/api/destinations/
+```
+
+If that fails, restart the dev server:
+
+```bash
+pkill -f "manage.py runserver"
+python manage.py runserver
+```
+
+If `runserver` hangs and never starts listening, run it without the autoreloader:
+
+```bash
+python manage.py runserver --noreload
+```
 
 ## Project Status
 

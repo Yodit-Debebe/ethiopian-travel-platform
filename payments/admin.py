@@ -28,6 +28,8 @@ class PaymentAdmin(admin.ModelAdmin):
         "transaction_reference",
     )
 
+    list_select_related = ("booking", "booking__user")
+
     readonly_fields = (
         "transaction_reference",
         "created_at",

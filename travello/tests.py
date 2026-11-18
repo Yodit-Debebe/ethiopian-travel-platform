@@ -6,8 +6,11 @@ from io import BytesIO
 from PIL import Image
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+
+from djapro.validators import validate_image_size
 
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -348,6 +351,45 @@ class DestinationCreationAPITests(APITestCase):
                 name="New Destination"
             ).exists()
         )
+
+    def test_destination_rejects_unsupported_image_extension(self):
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Token {self.token.key}"
+        )
+
+        image = self.get_test_image()
+        image.name = "not-an-image.txt"
+
+        data = {
+            "name": "Bad Image Destination",
+            "desc": "This upload should be rejected",
+            "price": 500,
+            "img": image,
+        }
+
+        response = self.client.post(
+            self.url,
+            data,
+            format="multipart"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST
+        )
+        self.assertIn("img", response.data)
+        self.assertFalse(
+            Destination.objects.filter(
+                name="Bad Image Destination"
+            ).exists()
+        )
+
+    def test_image_size_validator_rejects_large_files(self):
+        class LargeImage:
+            size = 6 * 1024 * 1024
+
+        with self.assertRaises(ValidationError):
+            validate_image_size(LargeImage())
 
     def test_unauthenticated_user_cannot_create_destination(self):
         data = {

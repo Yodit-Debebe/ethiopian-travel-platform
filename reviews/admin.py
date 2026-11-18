@@ -28,6 +28,8 @@ class ReviewAdmin(admin.ModelAdmin):
         "comment",
     )
 
+    list_select_related = ("user", "destination")
+
     readonly_fields = (
         "created_at",
         "updated_at",

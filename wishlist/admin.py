@@ -23,6 +23,8 @@ class WishlistAdmin(admin.ModelAdmin):
         "destination__name",
     )
 
+    list_select_related = ("user", "destination")
+
     readonly_fields = (
         "created_at",
     )

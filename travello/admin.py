@@ -4,8 +4,8 @@ from .models import Destination
 
 @admin.register(Destination)
 class DestinationAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "price", "img")
+    list_display = ("id", "name", "category", "price", "img")
     search_fields = ("name", "desc")
-    list_filter = ("price",)
+    list_filter = ("category", "price")
     ordering = ("id",)
     list_per_page = 10

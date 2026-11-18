@@ -26,6 +26,8 @@ class BookingAdmin(admin.ModelAdmin):
         "destination__name",
     )
 
+    list_select_related = ("user", "destination")
+
     ordering = ("-created_at",)
 
     readonly_fields = (
